@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action='{{url_for("new_product")}}' method="post"> 
+        <p>Владивосток ---->{{city}} </p>
+        <p>Тип коробки:{{box}} </p>
+        <p>Цена от {{price}} рублей</p>
+        <input type = radio name=type_p value="usual"> {{type_product['name'][0]}} <br>
+        <input type = radio name=type_p value="fragile"> {{type_product['name'][1]}} <br>
+        <input type = radio name=type_p value="danger"> {{type_product['name'][2]}} <br>
+        <p>Введите название товара<input type = "text" name = 'name_product' value = 'имя'></p>
+        <p>Введите вес товара<input type = "number" name = 'weight_product' value=0></p>
+        <p>Введите объем товара<input type = "number" name = 'volume_product' value=0></p>
+        <input type=submit value="Оформить заказ">
+    </form>
+    <p>{{name}}</p>
+</body>
+</html>

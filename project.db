@@ -1,0 +1,75 @@
+DROP TABLE IF EXISTS box;
+
+CREATE TABLE box (
+       ID_box INTEGER PRIMARY KEY AUTOINCREMENT,
+	   max_weight INT,
+         max_volume INT,
+         price INT,
+         box_name VARCHAR(30)
+);
+
+INSERT INTO box (max_weight, max_volume, price, box_name)  VALUES 
+(0.1, 20, 100, 'Письмо'),
+(1, 1000, 200, 'Коробка XS до 1 кг'),
+(5, 5000, 300, 'Коробка S до 5 кг'),
+(20, 8000, 400, 'Коробка M до 20 кг'),
+(50, 1000000, 500, 'Коробка L до 50 кг');
+
+DROP TABLE IF EXISTS distance_cities;
+
+CREATE TABLE distance_cities (
+       ID_distance INTEGER PRIMARY KEY AUTOINCREMENT,
+	   city VARCHAR(30),
+       distance INT
+);
+
+INSERT INTO distance_cities (city, distance)  VALUES 
+('Москва', 9020),
+('Санкт-Петербург', 9400),
+('Уссурийск', 100),
+('Находка', 160),
+('Агинск', 2850);
+
+DROP TABLE IF EXISTS type_product;
+
+CREATE TABLE type_product (
+       ID_type_product INTEGER PRIMARY KEY AUTOINCREMENT,
+	   name VARCHAR(30)
+);
+
+INSERT INTO type_product (name) VALUES 
+('Обычный'),
+('Хрупкий'),
+('Опасный');
+
+DROP TABLE IF EXISTS cost_calculation;
+
+CREATE TABLE cost_calculation (
+       ID_cost_calculation INTEGER PRIMARY KEY AUTOINCREMENT,
+       ID_box INT,
+       ID_distance INT,
+       price_product INT,
+	   FOREIGN KEY (ID_box)  REFERENCES box (ID_box) ON DELETE CASCADE,
+       FOREIGN KEY (ID_distance)  REFERENCES distance_cities (ID_distance) ON DELETE CASCADE
+);
+
+INSERT INTO cost_calculation (ID_box, ID_distance, price_product)
+SELECT b.ID_box, d.ID_distance, b.price + d.distance AS price_product
+FROM box b
+CROSS JOIN distance_cities d;
+
+DROP TABLE IF EXISTS product;
+
+CREATE TABLE product (
+       ID_product INTEGER PRIMARY KEY AUTOINCREMENT,
+	ID_cost_calculation INT,
+       ID_type_product INT,
+       name VARCHAR(30),
+       weight INT,
+       volume INT,
+       FOREIGN KEY (ID_cost_calculation)  REFERENCES cost_calculation (ID_cost_calculation) ON DELETE CASCADE,
+       FOREIGN KEY (ID_type_product)  REFERENCES type_product (ID_type_product) ON DELETE CASCADE
+);
+
+INSERT INTO product (ID_cost_calculation, ID_type_product, name, weight, volume)  VALUES 
+(5, 2, 'Книга', 1, 100);

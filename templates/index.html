@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+
+{% macro render_table(table_name, relation) %}         
+         <p>            
+            <b>{{table_name}} </b>         
+         </p>         
+         {% set n = len(relation) %}         
+         <table>             
+            <tr>             
+                {% for name in relation.dtypes.index %}                             
+                <th>{{name}}</th>                                 
+                {% endfor %}             
+            </tr>             
+            <tbody>                          
+                {% for i in range(n) %}                    
+                <tr>                 
+                    {% for name in relation.dtypes.index %}                                               
+                    <td>                                                   
+                        {{ relation.loc[i, name] }}                                              
+                    </td>                                  
+                    {% endfor %}              
+                </tr>           
+                {% endfor %}         
+            </tbody>         
+        </table>     
+{% endmacro %}
+
+
+{% macro render_select(select_name, combo_box, p_name, id) %}          
+                   <select name='{{select_name}}'>         
+                        {% for i in range(len(combo_box)) %}  
+                        <option value="{{i+1}}" {% if combo_box.loc[i, p_name] == id %} selected {% endif %}>{{combo_box.loc[i, p_name]}}</option>         
+                        {% endfor %}        
+                    </select>
+{% endmacro %}
+<body>
+    <form action='{{url_for("index")}}' method="post"> 
+    <p>Город доставки{{render_select("cities", com_cities, 'city', city)}}</p>
+    <p>Выберите коробку{{render_select("box", com_box, 'box_name', box)}}</p>            
+        <input type="submit" value="Расчитать стоимость">
+    {% if price == 0 %}
+    <p></p>
+    {% elif price !=0 %}
+        <p>Маршрут: Владивостока ----->{{city}}</p>
+        <p>Тип коробки: {{box}}</p>
+        <p>Стоимость от: {{price}} рублей</p>
+        <p>Выберите тип товара</p>
+        <input type = radio name=type_p value="usual"> Обычный <br>
+        <input type = radio name=type_p value="fragile"> Хрупкий <br>
+        <input type = radio name=type_p value="danger"> Опасный<br>
+        <p>Введите название товара<input type = "text" name = 'name_product' value = 'имя'></p>
+        <p>Введите вес товара<input type = "number" name = 'weight_product' value=0></p>
+        <p>Введите объем товара<input type = "number" name = 'volume_product' value=0></p>
+        <input type=submit value="Оформить заказ">
+    </form>
+    {%endif%}
+    <form action='{{url_for("search")}}' method="get">
+        <input type="submit" value="Найти товар">
+    </form>
+    {{render_table('таблица', com_product)}}
+</body>
+</html>
